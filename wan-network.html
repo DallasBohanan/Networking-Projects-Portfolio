@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WAN Network — Dallas Bohanan Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script>
+    (function() {
+      var t = localStorage.getItem('ccna-portfolio-theme');
+      var p = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', t || (p ? 'dark' : 'light'));
+    })();
+  </script>
+  <link rel="stylesheet" href="lan-network.html" />
+  <style>
+    /* reuse all styles from lan-network inline */
+    .net-hero { padding: 120px 0 60px; background: var(--bg-2); border-bottom: 1px solid var(--border); }
+    .net-hero .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+    .net-hero__back { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.06em; margin-bottom: 28px; transition: gap 0.22s ease; }
+    .net-hero__back:hover { gap: 10px; }
+    .net-hero__badge { display: inline-block; background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; }
+    .net-hero h1 { font-family: var(--font-display); font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 600; color: var(--navy); line-height: 1.1; margin-bottom: 16px; }
+    .net-hero__sub { color: var(--text-muted); max-width: 660px; font-size: 1.02rem; line-height: 1.7; }
+    .topology-section { padding: 60px 0 0; }
+    .topology-section .container, .aspects-section .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+    .topology-section h2, .aspects-section h2 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 600; color: var(--navy); margin-bottom: 20px; }
+    .topology-img-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 48px; }
+    .topology-img-wrap img { width: 100%; display: block; cursor: zoom-in; }
+    .topology-placeholder { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; height: 320px; color: var(--text-dim); font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-2); }
+    .topology-placeholder span { font-size: 3rem; }
+    .aspects-section { padding: 0 0 80px; }
+    .aspects-intro { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 32px; }
+    .aspects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .aspect-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; cursor: pointer; transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease; display: flex; flex-direction: column; gap: 8px; }
+    .aspect-card:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-md); transform: translateY(-2px); }
+    .aspect-card__icon { font-size: 1.5rem; margin-bottom: 4px; }
+    .aspect-card__title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--navy); }
+    .aspect-card__sub { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); }
+    .aspect-card__arrow { margin-top: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); z-index: 1000; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 800px; padding: 40px 44px; position: relative; animation: modalIn 0.25s ease; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .modal__close { position: absolute; top: 18px; right: 20px; background: none; border: 1px solid var(--border); border-radius: 50%; width: 34px; height: 34px; font-size: 1rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.22s ease, color 0.22s ease; }
+    .modal__close:hover { border-color: var(--accent); color: var(--accent); }
+    .modal__label { font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .modal__label::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--accent); }
+    .modal__title { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--navy); margin-bottom: 16px; line-height: 1.15; }
+    .modal__desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 28px; }
+    .modal .config-block { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+    .modal .config-block__header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg-card-alt); }
+    .modal .config-block__title { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.06em; }
+    .modal .config-block__copy { background: none; border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); cursor: pointer; }
+    .modal .config-block pre { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text); padding: 16px; overflow-x: auto; line-height: 1.6; white-space: pre; }
+    .modal__takeaways { margin-top: 8px; }
+    .modal__takeaways h4 { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .modal__takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .modal__takeaways li { font-size: 0.88rem; color: var(--text-muted); padding-left: 16px; position: relative; line-height: 1.55; }
+    .modal__takeaways li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.75rem; }
+    @media (max-width: 600px) { .modal { padding: 28px 20px; } .aspects-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <a href="index.html" class="nav__logo">
+      <span class="logo-bracket">[</span><span class="logo-name">Dallas Bohanan</span><span class="logo-bracket">]</span>
+    </a>
+    <div class="nav__right">
+      <ul class="nav__links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#projects">Projects</a></li>
+        <li><a href="index.html#skills">Skills</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <span class="theme-toggle__knob">☀️</span>
+      </button>
+      <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <header class="net-hero">
+    <div class="container">
+      <a href="index.html#projects" class="net-hero__back">← Back to Projects</a>
+      <div class="net-hero__badge">WAN Network</div>
+      <h1>Multi-Router WAN Build</h1>
+      <p class="net-hero__sub">
+        A multi-site WAN connecting Router0 (LAN A) and Router1 (LAN B) through R3 as a hub
+        using OSPF. Includes NAT overload for outbound internet translation, extended ACLs
+        for traffic control, and SSH-hardened remote access on all devices.
+      </p>
+    </div>
+  </header>
+
+  <section class="topology-section">
+    <div class="container">
+      <h2>Network Topology</h2>
+      <div class="topology-img-wrap">
+        <img src="OSPF_DHCP_Intervlan_network.png"
+          alt="WAN Network Topology"
+          id="topoImg"
+          onerror="this.style.display='none'; document.getElementById('topoPlaceholder').style.display='flex';" />
+        <div class="topology-placeholder" id="topoPlaceholder" style="display:none;">
+          <span>🌐</span>
+          <p>Add wan-topology.png to assets/screenshots/</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="aspects-section">
+    <div class="container">
+      <h2>Implementation Breakdown</h2>
+      <p class="aspects-intro">Click any area to see the configuration, design reasoning, and key takeaways.</p>
+
+      <div class="aspects-grid">
+
+        <div class="aspect-card" onclick="openModal('ospf')">
+          <div class="aspect-card__icon">📡</div>
+          <div class="aspect-card__title">OSPF Implementation</div>
+          <div class="aspect-card__sub">Hub-and-spoke · adjacency formation · WAN links</div>
+          <div class="aspect-card__arrow">View details →</div>
+        </div>
+
+        <div class="aspect-card" onclick="openModal('nat')">
+          <div class="aspect-card__icon">🔄</div>
+          <div class="aspect-card__title">NAT / PAT</div>
+          <div class="aspect-card__sub">Inside source · overload · translation table</div>
+          <div class="aspect-card__arrow">View details →</div>
+        </div>
+
+        <div class="aspect-card" onclick="openModal('acl')">
+          <div class="aspect-card__icon">🔒</div>
+          <div class="aspect-card__title">ACL Configuration</div>
+          <div class="aspect-card__sub">Extended ACLs · placement · permit / deny logic</div>
+          <div class="aspect-card__arrow">View details →</div>
+        </div>
+
+        <div class="aspect-card" onclick="openModal('ssh')">
+          <div class="aspect-card__icon">🔑</div>
+          <div class="aspect-card__title">SSH Hardening</div>
+          <div class="aspect-card__sub">RSA keys · VTY lines · transport input ssh</div>
+          <div class="aspect-card__arrow">View details →</div>
+        </div>
+
+        <div class="aspect-card" onclick="openModal('subnet')">
+          <div class="aspect-card__icon">🔢</div>
+          <div class="aspect-card__title">Subnetting Logic</div>
+          <div class="aspect-card__sub">203.0.113.0 WAN links · /30 point-to-point</div>
+          <div class="aspect-card__arrow">View details →</div>
+        </div>
+
+        <div class="aspect-card" onclick="openModal('default')">
+          <div class="aspect-card__icon">🗺</div>
+          <div class="aspect-card__title">Default Routes</div>
+          <div class="aspect-card__sub">Gateway of last resort · OSPF origination</div>
+          <div class="aspect-card__arrow">View details →</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modalBox">
+      <button class="modal__close" onclick="closeModal()">✕</button>
+      <div class="modal__label" id="modalLabel">Implementation</div>
+      <h2 class="modal__title" id="modalTitle"></h2>
+      <p class="modal__desc" id="modalDesc"></p>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container"><p>© <span id="year"></span> Dallas Bohanan · Networking Portfolio</p></div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    const aspects = {
+      ospf: {
+        label: 'Routing Protocol',
+        title: 'OSPF Implementation',
+        desc: 'R3 acts as the WAN hub connecting Router0 (LAN A) and Router1 (LAN B) via separate /30 point-to-point links. Single-area OSPF (area 0) runs across all three routers. Each router advertises its WAN link and connected LAN subnets so all sites can reach each other.',
+        configs: [
+          {
+            label: 'R3 — Hub Router OSPF',
+            code:
+`hostname R3
+!
+router ospf 1
+ network 203.0.113.8 0.0.0.3 area 0   ! link to Router0
+ network 203.0.113.4 0.0.0.3 area 0   ! link to Router1`
+          },
+          {
+            label: 'Router0 — LAN A Side',
+            code:
+`router ospf 1
+ network 203.0.113.8 0.0.0.3 area 0
+ network 10.0.0.0 0.0.0.127 area 0
+ network 10.0.0.128 0.0.0.127 area 0
+ network 10.0.1.0 0.0.0.31 area 0`
+          }
+        ],
+        takeaways: [
+          'Hub-and-spoke OSPF: spoke routers only see each other through the hub — R3 must advertise both WAN subnets',
+          'OSPF adjacency confirmed with: show ip ospf neighbor — state should reach FULL',
+          'Wildcard mask 0.0.0.3 matches a /30 subnet — inverse of 255.255.255.252'
+        ]
+      },
+
+      nat: {
+        label: 'IP Services',
+        title: 'NAT / PAT (Overload)',
+        desc: 'NAT overload (PAT) translates all internal RFC 1918 addresses to a single public IP on the outside interface. An access list defines which source addresses are eligible for translation. The inside/outside interface designations tell IOS which direction to translate.',
+        configs: [
+          {
+            label: 'Router0 — NAT Overload Config',
+            code:
+`ip access-list standard ACL_NAT
+ permit 10.0.0.0 0.0.255.255
+!
+ip nat inside source list ACL_NAT interface GigabitEthernet0/0 overload
+!
+interface GigabitEthernet0/0        ! WAN - facing outside
+ ip nat outside
+!
+interface GigabitEthernet0/1        ! LAN - facing inside
+ ip nat inside`
+          }
+        ],
+        takeaways: [
+          'NAT requires inside and outside interface designations — missing either = no translation',
+          'Overload (PAT) uses port numbers to track multiple sessions through a single IP',
+          'Verify with: show ip nat translations — each active session appears as a row'
+        ]
+      },
+
+      acl: {
+        label: 'Security',
+        title: 'ACL Configuration',
+        desc: 'Extended ACLs control traffic between VLANs and toward the internet. Placed as close to the source as possible (inbound on the LAN-facing interface), they evaluate traffic before it enters the routing process. ACL entries are processed top-down — first match wins.',
+        configs: [
+          {
+            label: 'Router0 — Extended ACL',
+            code:
+`ip access-list extended ACL_LAN_IN
+ deny   ip 10.0.0.0 0.0.0.127 10.0.0.128 0.0.0.127   ! block VLAN10 -> VLAN20
+ permit ip 10.0.0.0 0.0.255.255 any                   ! allow everything else
+!
+interface GigabitEthernet0/1.10
+ ip access-group ACL_LAN_IN in`
+          }
+        ],
+        takeaways: [
+          'Extended ACLs belong close to the source — standard ACLs belong close to the destination',
+          'The implicit deny at the end of every ACL drops anything not explicitly permitted',
+          'Verify with: show access-lists — hit counter increments on matched entries'
+        ]
+      },
+
+      ssh: {
+        label: 'Device Hardening',
+        title: 'SSH Hardening',
+        desc: 'Telnet sends credentials in plaintext — SSH encrypts the session. Enabling SSH requires a domain name set (for key generation), an RSA key pair of at least 1024 bits, SSH version 2, and VTY lines configured to reject Telnet entirely.',
+        configs: [
+          {
+            label: 'All Routers — SSH Configuration',
+            code:
+`hostname Router0
+ip domain-name ccnalab.local
+!
+crypto key generate rsa modulus 1024
+ip ssh version 2
+!
+username admin privilege 15 secret YourPassword
+!
+line vty 0 4
+ login local
+ transport input ssh`
+          }
+        ],
+        takeaways: [
+          'ip domain-name must be set before crypto key generate rsa — the FQDN is embedded in the key',
+          'transport input ssh (not telnet) ensures Telnet connections are rejected at the VTY lines',
+          'Verify with: show ip ssh — should show SSH enabled, version 2'
+        ]
+      },
+
+      subnet: {
+        label: 'Addressing Design',
+        title: 'WAN Subnetting Logic',
+        desc: 'WAN point-to-point links use 203.0.113.0/24 address space carved into /30 subnets. A /30 provides exactly 2 usable host addresses — one per router end — with zero waste. The 203.0.113.0 range is RFC 5737 documentation space, appropriate for lab use.',
+        configs: [
+          {
+            label: 'WAN Link Allocation',
+            code:
+`LINK         NETWORK            USABLE          ROUTER IPs
+R3 — R0      203.0.113.8/30     .9 - .10        R3=.9, R0=.10
+R3 — R1      203.0.113.4/30     .5 - .6         R3=.5, R1=.6
+R1 — R2      203.0.113.0/30     .1 - .2         R2=.1, R1=.2
+
+BINARY /30 BREAKDOWN:
+203.0.113.8  = 11001011.00000000.01110001.00001|000
+Mask /30     = 11111111.11111111.11111111.111111|00
+                                                     ^^ 2 host bits = 4 addr, 2 usable`
+          }
+        ],
+        takeaways: [
+          '/30 = 2^2 - 2 = 2 usable hosts — exactly right for a router-to-router link',
+          'Each /30 is carved from 203.0.113.0/24 in blocks of 4: .0, .4, .8, .12...',
+          'Using the wrong network address in a static route causes "% Inconsistent address and mask" error'
+        ]
+      },
+
+      default: {
+        label: 'Routing',
+        title: 'Default Routes',
+        desc: 'A default route (0.0.0.0/0) is the gateway of last resort — used when no more specific route matches. On the edge router facing the internet, a static default route points outbound. This default can also be injected into OSPF so all interior routers learn it without needing their own static routes.',
+        configs: [
+          {
+            label: 'Edge Router — Default Route + OSPF Injection',
+            code:
+`! Static default pointing to ISP
+ip route 0.0.0.0 0.0.0.0 [ISP_NEXT_HOP_IP]
+!
+! Advertise it into OSPF so spoke routers learn it
+router ospf 1
+ default-information originate`
+          },
+          {
+            label: 'Spoke Router — Verify default received',
+            code:
+`Router0# show ip route
+...
+S*   0.0.0.0/0 [1/0] via 203.0.113.9   ! static
+! OR if learned via OSPF:
+O*E2 0.0.0.0/0 [110/1] via 203.0.113.9`
+          }
+        ],
+        takeaways: [
+          'default-information originate injects the default into OSPF only if the router itself has a default route',
+          'S* means static default, O*E2 means OSPF external type 2 — both work as gateway of last resort',
+          'Without a default route, traffic to unknown destinations is dropped — no internet access'
+        ]
+      }
+    };
+
+    function openModal(key) {
+      const data = aspects[key];
+      if (!data) return;
+      document.getElementById('modalLabel').textContent = data.label;
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalDesc').textContent = data.desc;
+      let html = '';
+      (data.configs || []).forEach(c => {
+        html += `<div class="config-block">
+          <div class="config-block__header">
+            <span class="config-block__title">${c.label}</span>
+            <button class="config-block__copy" onclick="copyBlock(this)">Copy</button>
+          </div>
+          <pre>${c.code}</pre>
+        </div>`;
+      });
+      if (data.takeaways?.length) {
+        html += `<div class="modal__takeaways"><h4>Key Takeaways</h4><ul>${data.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;
+      }
+      document.getElementById('modalContent').innerHTML = html;
+      document.getElementById('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    function copyBlock(btn) {
+      const pre = btn.closest('.config-block').querySelector('pre');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => btn.textContent = orig, 1800);
+      });
+    }
+
+    document.getElementById('topoImg')?.addEventListener('click', function() {
+      const lb = document.createElement('div');
+      lb.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px;';
+      const img = document.createElement('img');
+      img.src = this.src;
+      img.style.cssText = 'max-width:100%;max-height:90vh;border-radius:8px;';
+      lb.appendChild(img);
+      lb.onclick = () => lb.remove();
+      document.body.appendChild(lb);
+    });
+
+    const yr = document.getElementById('year');
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    document.getElementById('themeToggle')?.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ccna-portfolio-theme', next);
+      const knob = document.querySelector('.theme-toggle__knob');
+      if (knob) knob.textContent = next === 'dark' ? '🌙' : '☀️';
+    });
+  </script>
+</body>
+</html>

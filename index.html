@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dallas Bohanan — Networking Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script>
+    (function() {
+      var t = localStorage.getItem('ccna-portfolio-theme');
+      var p = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', t || (p ? 'dark' : 'light'));
+    })();
+  </script>
+  <style>
+    /* ── v4 Network Cards ── */
+    .network-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 20px;
+    }
+    @media (max-width: 700px) {
+      .network-cards { grid-template-columns: 1fr; }
+    }
+
+    .network-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+    .network-card:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .network-card__link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* topology image */
+    .network-card__img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--bg-2);
+      overflow: hidden;
+    }
+    .network-card__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .network-card:hover .network-card__img { transform: scale(1.03); }
+    .network-card__img-placeholder {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .network-card__img-placeholder span { font-size: 2rem; }
+
+    /* overlay label on image */
+    .network-card__badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .network-card__body {
+      padding: 24px 28px 28px;
+    }
+    .network-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .network-card__title {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .network-card__desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* aspect pills at bottom of card */
+    .network-card__aspects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+    .aspect-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid rgba(46,124,190,0.2);
+      border-radius: 4px;
+      padding: 3px 9px;
+      letter-spacing: 0.04em;
+    }
+
+    .network-card__cta {
+      display: inline-block;
+      margin-top: 18px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      transition: gap var(--transition);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <a href="#home" class="nav__logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-name">Dallas Bohanan</span>
+      <span class="logo-bracket">]</span>
+    </a>
+    <div class="nav__right">
+      <ul class="nav__links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <span class="theme-toggle__knob">☀️</span>
+      </button>
+      <button class="nav__hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero__grid-bg"></div>
+    <div class="hero__content">
+      <p class="hero__eyebrow">Network Engineer Portfolio</p>
+      <h1 class="hero__title">
+        <span class="hero__title-line">Building</span>
+        <span class="hero__title-line">Networks .</span>
+        <span class="hero__title-line italic">Solving Problems .</span>
+      </h1>
+      <p class="hero__sub">
+        CCNA candidate documenting real Packet Tracer labs — from OSPF and VLANs
+        to security, DHCP relay, and full end-to-end packet flow analysis.
+      </p>
+      <div class="hero__cta">
+        <a href="#projects" class="btn btn--primary">Explore Projects</a>
+        <a href="#about" class="btn btn--ghost">About Me</a>
+      </div>
+    </div>
+    <div class="hero__scroll-hint">scroll ↓</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about section" id="about">
+    <div class="container">
+      <div class="section-label">01 · About</div>
+      <div class="about__grid">
+        <div class="about__text">
+          <h2 class="section-title">Who I Am</h2>
+          <p>
+            I'm Dallas Bohanan, a networking enthusiast currently pursuing my Cisco CCNA certification.
+            I'm passionate about understanding how data moves across networks and building reliable,
+            secure infrastructure from the ground up.
+          </p>
+          <p>
+            This portfolio captures my hands-on work in Cisco Packet Tracer — each project reflects
+            my understanding and problem-solving approach. I document not just the configs, but the
+            <em>thinking</em> behind each decision.
+          </p>
+          <p>
+            My goal is to become a proficient network engineer, specializing in designing and
+            maintaining robust, secure networks.
+          </p>
+        </div>
+        <div class="about__right">
+          <div class="badge-placeholder">
+            <div class="badge-inner">
+              <span class="badge-icon">🏅</span>
+              <p class="badge-label">Cisco CCNA</p>
+              <p class="badge-sublabel">Badge Coming Soon</p>
+            </div>
+          </div>
+          <div class="about__stats">
+            <div class="stat-card"><span class="stat-num">2</span><span class="stat-label">Network Builds</span></div>
+            <div class="stat-card"><span class="stat-num">200-301</span><span class="stat-label">Exam Track</span></div>
+            <div class="stat-card"><span class="stat-num">6</span><span class="stat-label">Topic Domains</span></div>
+            <div class="stat-card"><span class="stat-num">120</span><span class="stat-label">Exam Minutes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS — two network cards -->
+  <section class="projects section" id="projects">
+    <div class="container">
+      <div class="section-label">02 · Projects</div>
+      <h2 class="section-title">Network Builds</h2>
+      <p class="section-sub">
+        Each card represents a full network build. Click to explore the topology, then drill into
+        any implementation area — OSPF, VLANs, subnetting, security, and more.
+      </p>
+
+      <div class="network-cards">
+
+        <!-- LAN CARD -->
+        <article class="network-card">
+          <a href="lan-network.html" class="network-card__link">
+            <div class="network-card__img-wrap">
+              <img src="OSPF_DHCP_Intervlan_network.png"
+                alt="LAN Network topology"
+                class="network-card__img"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div class="network-card__img-placeholder"><span>🖧</span><p>Add topology screenshot</p></div>
+              <span class="network-card__badge">LAN</span>
+            </div>
+            <div class="network-card__body">
+              <div class="network-card__tags">
+                <span class="tag">VLANs</span><span class="tag">OSPF</span>
+                <span class="tag">DHCP Relay</span><span class="tag">Router-on-a-Stick</span>
+              </div>
+              <h3 class="network-card__title">LAN Network</h3>
+              <p class="network-card__desc">
+                A dual-site LAN with multi-VLAN segmentation, router-on-a-stick inter-VLAN routing,
+                centralized DHCP with relay agents, and OSPF tying both sites together.
+                Includes subnetting across a 10.0.0.0/8 address space.
+              </p>
+              <div class="network-card__aspects">
+                <span class="aspect-pill">OSPF Implementation</span>
+                <span class="aspect-pill">VLAN Segmentation</span>
+                <span class="aspect-pill">DHCP Relay</span>
+                <span class="aspect-pill">Subnetting Logic</span>
+                <span class="aspect-pill">Router-on-a-Stick</span>
+                <span class="aspect-pill">Static Routes</span>
+              </div>
+              <span class="network-card__cta">Explore LAN Build →</span>
+            </div>
+          </a>
+        </article>
+
+        <!-- WAN CARD -->
+        <article class="network-card">
+          <a href="wan-network.html" class="network-card__link">
+            <div class="network-card__img-wrap">
+              <img src="assets/screenshots/wan-topology.png"
+                alt="WAN Network topology"
+                class="network-card__img"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div class="network-card__img-placeholder"><span>🌐</span><p>Add topology screenshot</p></div>
+              <span class="network-card__badge">WAN</span>
+            </div>
+            <div class="network-card__body">
+              <div class="network-card__tags">
+                <span class="tag">OSPF</span><span class="tag">NAT/PAT</span>
+                <span class="tag">ACLs</span><span class="tag">SSH</span>
+              </div>
+              <h3 class="network-card__title">WAN Network</h3>
+              <p class="network-card__desc">
+                A multi-router WAN topology with OSPF routing between sites, NAT overload for
+                internet-facing translation, extended ACLs for traffic control, and SSH-hardened
+                device management across all routers.
+              </p>
+              <div class="network-card__aspects">
+                <span class="aspect-pill">OSPF Implementation</span>
+                <span class="aspect-pill">NAT / PAT</span>
+                <span class="aspect-pill">ACL Configuration</span>
+                <span class="aspect-pill">SSH Hardening</span>
+                <span class="aspect-pill">Subnetting Logic</span>
+                <span class="aspect-pill">Default Routes</span>
+              </div>
+              <span class="network-card__cta">Explore WAN Build →</span>
+            </div>
+          </a>
+        </article>
+
+         <!-- Automation card -->
+        <article class="network-card">
+          <a href="wan-network.html" class="network-card__link">
+            <div class="network-card__img-wrap">
+              <img src="assets/screenshots/wan-topology.png"
+                alt="Automation"
+                class="network-card__img"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div class="network-card__img-placeholder"><span>🌐</span><p>Add topology screenshot</p></div>
+              <span class="network-card__badge">Automation</span>
+            </div>
+            <div class="network-card__body">
+              <div class="network-card__tags">
+                <span class="tag">OSPF</span><span class="tag">NAT/PAT</span>
+                <span class="tag">ACLs</span><span class="tag">SSH</span>
+              </div>
+              <h3 class="network-card__title">Automation Implementation</h3>
+              <p class="network-card__desc">
+                A multi-router WAN topology with OSPF routing between sites, NAT overload for
+                internet-facing translation, extended ACLs for traffic control, and SSH-hardened
+                device management across all routers.
+              </p>
+              <div class="network-card__aspects">
+                <span class="aspect-pill">OSPF Implementation</span>
+                <span class="aspect-pill">NAT / PAT</span>
+                <span class="aspect-pill">ACL Configuration</span>
+                <span class="aspect-pill">SSH Hardening</span>
+                <span class="aspect-pill">Subnetting Logic</span>
+                <span class="aspect-pill">Default Routes</span>
+              </div>
+              <span class="network-card__cta">Explore WAN Build →</span>
+            </div>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills section" id="skills">
+    <div class="container">
+      <div class="section-label">03 · Skills</div>
+      <h2 class="section-title">Technical Toolkit</h2>
+      <div class="skills__grid">
+        <div class="skill-group">
+          <h4 class="skill-group__title">Routing Protocols</h4>
+          <ul class="skill-list">
+            <li>OSPFv2 (Single &amp; Multi-Area)</li><li>Static &amp; Floating Routes</li>
+            <li>Default Routes</li><li>Administrative Distance</li>
+            <li>Longest Prefix Match</li><li>IPv4 &amp; IPv6</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4 class="skill-group__title">Switching &amp; Access</h4>
+          <ul class="skill-list">
+            <li>VLANs (802.1Q Trunking)</li><li>Rapid PVST+ STP</li>
+            <li>LACP EtherChannel</li><li>Inter-VLAN Routing</li>
+            <li>CDP / LLDP</li><li>Port Security</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4 class="skill-group__title">Security</h4>
+          <ul class="skill-list">
+            <li>Standard &amp; Extended ACLs</li><li>DHCP Snooping</li>
+            <li>Dynamic ARP Inspection</li><li>WPA2 / WPA3</li>
+            <li>SSH Remote Access</li><li>Device Hardening</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4 class="skill-group__title">IP Services</h4>
+          <ul class="skill-list">
+            <li>NAT / PAT</li><li>DHCP Server &amp; Relay</li>
+            <li>DNS</li><li>NTP</li><li>QoS Fundamentals</li><li>SNMP / Syslog</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h4 class="skill-group__title">Tools &amp; Platforms</h4>
+          <ul class="skill-list">
+            <li>Cisco Packet Tracer</li><li>Cisco IOS CLI</li>
+            <li>Wireshark</li><li>VS Code</li>
+            <li>REST APIs</li><li>JSON / YAML</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact section" id="contact">
+    <div class="container">
+      <div class="section-label">04 · Contact</div>
+      <h2 class="section-title">Get In Touch</h2>
+      <p class="section-sub">Open to networking opportunities, collaborations, or just talking shop.</p>
+      <div class="contact__links">
+        <a href="mailto:DallasBohananproac@gmail.com" class="contact-link">
+          <span class="contact-link__icon">✉</span>
+          <span>DallasBohananproac@gmail.com</span>
+        </a>
+        <a href="https://www.linkedin.com/in/dallas-bohanan-2a1713221/" target="_blank" class="contact-link">
+          <span class="contact-link__icon">in</span>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://github.com/DallasBohanan/DallasBohanan" target="_blank" class="contact-link">
+          <span class="contact-link__icon">⌥</span>
+          <span>GitHub</span>
+        </a>
+        <a href="#" class="contact-link contact-link--resume" onclick="window.print(); return false;">
+          <span class="contact-link__icon">↓</span>
+          <span>Download Resume</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Dallas Bohanan · Networking Portfolio</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
